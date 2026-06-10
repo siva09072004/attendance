@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Mobile Registration</title>
+
+    <link
+    rel="stylesheet"
+    href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<div class="mobile-card">
+
+    <h1>📸 Face Registration</h1>
+
+    <p id="studentName"></p>
+
+    <div class="camera-box">
+
+        <input
+            type="file"
+            id="photo"
+            accept="image/*"
+            capture="user"
+            onchange="previewImage()">
+
+        <br><br>
+
+        <img
+            id="preview"
+            width="250"
+            style="
+            display:none;
+            border-radius:15px;
+            border:3px solid cyan;
+            box-shadow:0 0 20px cyan;">
+
+    </div>
+
+    <br>
+
+    <div class="progress-container">
+
+        <div
+            id="progressBar"
+            class="progress-bar">
+        </div>
+
+    </div>
+
+    <p id="counter">
+        Images: 0 / 20
+    </p>
+
+    <button
+        class="capture-btn"
+        onclick="captureImage()">
+
+        Upload Image
+
+    </button>
+
+    <button
+        class="capture-btn"
+        onclick="clearImage()">
+
+        Refresh
+
+    </button>
+
+    <p id="message"
+       style="
+       color:white;
+       font-size:18px;
+       margin-top:15px;
+       font-weight:bold;">
+    </p>
+
+</div>
+
+<script>
+
+let count = 0;
+
+const MAX_IMAGES = 20;
+
+const params =
+new URLSearchParams(
+    window.location.search
+);
+
+const student =
+params.get("name");
+
+document.getElementById(
+    "studentName"
+).innerText =
+"Student : " + student;
+
+
+// ======================
+// Preview Image
+// ======================
+
+function previewImage(){
+
+    const file =
+    document.getElementById(
+        "photo"
+    ).files[0];
+
+    if(!file){
+        return;
+    }
+
+    const reader =
+    new FileReader();
+
+    reader.onload =
+    function(e){
+
+        const img =
+        document.getElementById(
+            "preview"
+        );
+
+        img.src =
+        e.target.result;
+
+        img.style.display =
+        "block";
+
+        document.getElementById(
+            "message"
+        ).innerHTML = "";
+    };
+
+    reader.readAsDataURL(
+        file
+    );
+}
+
+
+// ======================
+// Upload Image
+// ======================
+
+async function captureImage(){
+
+    const file =
+    document.getElementById(
+        "photo"
+    ).files[0];
+
+    if(!file){
+
+        document.getElementById(
+            "message"
+        ).innerHTML =
+        "❌ Please select an image";
+
+        return;
+    }
+
+    const reader =
+    new FileReader();
+
+    reader.onload =
+    async function(){
+
+        const image =
+        reader.result;
+
+        const response =
+        await fetch(
+            "/upload_image",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                    "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    name:student,
+                    image:image
+
+                })
+            }
+        );
+
+        const data =
+        await response.json();
+
+        // --------------------
+        // Error Case
+        // --------------------
+
+        if(
+            data.status === "error"
+        ){
+
+            document.getElementById(
+                "message"
+            ).innerHTML =
+            "❌ " + data.message;
+
+            document.getElementById(
+                "photo"
+            ).value = "";
+
+            document.getElementById(
+                "preview"
+            ).src = "";
+
+            document.getElementById(
+                "preview"
+            ).style.display =
+            "none";
+
+            return;
+        }
+
+        // --------------------
+        // Success Case
+        // --------------------
+
+        count++;
+
+        document.getElementById(
+            "counter"
+        ).innerText =
+        `Images: ${count}/${MAX_IMAGES}`;
+
+        document.getElementById(
+            "progressBar"
+        ).style.width =
+        ((count/MAX_IMAGES)*100)
+        + "%";
+
+        document.getElementById(
+            "message"
+        ).innerHTML =
+        "✅ Image Saved Successfully";
+
+        document.getElementById(
+            "photo"
+        ).value = "";
+
+        document.getElementById(
+            "preview"
+        ).src = "";
+
+        document.getElementById(
+            "preview"
+        ).style.display =
+        "none";
+
+        if(
+            count >= MAX_IMAGES
+        ){
+
+            document.getElementById(
+                "message"
+            ).innerHTML =
+            "🎉 Registration Completed";
+
+            alert(
+                "Registration Completed"
+            );
+        }
+    };
+
+    reader.readAsDataURL(
+        file
+    );
+}
+
+
+// ======================
+// Refresh Button
+// ======================
+
+function clearImage(){
+
+    document.getElementById(
+        "photo"
+    ).value = "";
+
+    document.getElementById(
+        "preview"
+    ).src = "";
+
+    document.getElementById(
+        "preview"
+    ).style.display =
+    "none";
+
+    document.getElementById(
+        "message"
+    ).innerHTML = "";
+}
+
+</script>
+
+</body>
+</html>

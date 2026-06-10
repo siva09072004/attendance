@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+dataset/
+attendance.csv
+encodings.pkl
+*.pyc
+*.whl

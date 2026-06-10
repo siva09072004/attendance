@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Face Recognition Attendance</title>
+
+    <link
+    rel="stylesheet"
+    href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<div class="dashboard">
+
+   <div class="scanner-container">
+
+    <img
+    src="/static/image.png"
+    alt="AI Face">
+
+    <div class="scanner-line"></div>
+
+</div>
+
+    <h1>
+        Face Recognition Attendance
+    </h1>
+
+    <p class="subtitle">
+        Smart Attendance Using AI
+    </p>
+
+    <div class="stats">
+
+        <div class="box">
+
+            <h2>🤖</h2>
+
+            <h3>Students</h3>
+
+            <p>0</p>
+
+        </div>
+
+        <div class="box">
+
+            <h2>📈</h2>
+
+            <h3>Attendance</h3>
+
+            <p>0</p>
+
+        </div>
+
+    </div>
+
+    <div class="buttons">
+
+        <button
+        onclick="window.location.href='/register'">
+
+            Register Student
+
+        </button>
+
+        <button onclick="startAttendance()">
+    Start Attendance
+</button>
+
+    </div>
+
+</div>
+
+<script>
+
+async function startAttendance(){
+
+    const response =
+    await fetch(
+        "/start-attendance"
+    );
+
+    const data =
+    await response.json();
+
+    alert(
+        "Attendance Camera Started"
+    );
+}
+
+</script>
+
+</body>
+
+</html>

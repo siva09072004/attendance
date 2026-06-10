@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Register Student</title>
+
+    <link
+    rel="stylesheet"
+    href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<div class="register-card">
+
+    <h1>👤 Register Student</h1>
+
+    <p class="subtitle">
+        Generate QR and register from mobile
+    </p>
+
+    <input
+    type="text"
+    id="studentName"
+    placeholder="Enter Student Name">
+
+    <button
+    class="register-btn"
+    onclick="generateQR()">
+
+        Generate QR
+
+    </button>
+
+    <div id="qrArea"></div>
+
+</div>
+
+<script>
+
+async function generateQR(){
+
+    let name =
+    document.getElementById(
+        "studentName"
+    ).value;
+
+    if(name===""){
+
+        alert(
+            "Enter Student Name"
+        );
+
+        return;
+    }
+
+    const response =
+    await fetch(
+        "/generate_qr",
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":
+                "application/json"
+            },
+
+            body:JSON.stringify({
+                name:name
+            })
+        }
+    );
+
+    const data =
+    await response.json();
+
+    document.getElementById(
+        "qrArea"
+    ).innerHTML =
+
+    `
+    <div class="qr-card">
+
+        <h2>
+            📱 Scan This QR
+        </h2>
+
+        <img
+        src="${data.qr}"
+        class="qr-image">
+
+        <p>
+            Student:
+            ${name}
+        </p>
+
+        <p>
+            Open with Mobile Camera
+        </p>
+
+    </div>
+    `;
+}
+
+</script>
+
+</body>
+</html>
