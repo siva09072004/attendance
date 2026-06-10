@@ -5,8 +5,8 @@ import qrcode
 import datetime
 import face_recognition
 import qrcode
-import subprocess
-import sys
+from config import MONGO_URI
+
 
 from pymongo import MongoClient
 
@@ -17,7 +17,6 @@ app = Flask(
 )
 
 # MongoDB
-MONGO_URI = "mongodb+srv://sskshiva89:Sivakumar09072004@cluster0.bfi9eum.mongodb.net/?retryWrites=true&w=majority"
 
 
 client = MongoClient(MONGO_URI)
@@ -292,9 +291,9 @@ def upload_image():
         })
 
 if __name__ == "__main__":
-    print(app.url_map)
+    port = int(os.environ.get("PORT", 5000))
+
     app.run(
         host="0.0.0.0",
-        port=5000,
-        debug=True
+        port=port
     )
